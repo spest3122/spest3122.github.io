@@ -1,5 +1,5 @@
 .section {
   display: flex;
   flex: 1;
-  align-items: stretch;
+  padding: 20px;
 }
