@@ -1,6 +1,7 @@
-import { useEffect } from "react";
-import axios from "../../axios";
+import { useEffect, useState } from "react";
+import { mdaresApi } from "../Logic";
 import "./section.css";
+
 const sectionList = [
   { id: 1, name: "苗栗改良場", unitId: "106" },
   { id: 2, name: "畜產試驗所", unitId: "110" },
@@ -10,12 +11,13 @@ const sectionList = [
   { id: 6, name: "農業藥物試驗所", unitId: "D41" },
 ];
 function Section() {
+  const [list, setList] = useState([]);
   useEffect(() => {
-    // callApi();
+    callApi();
   }, []);
   const callApi = async () => {
-    let result = await axios.get("UnitId=106&$top=10");
-    console.log(result);
+    let result = await mdaresApi();
+    setList(result);
   };
   return (
     <section className="section">
@@ -26,7 +28,19 @@ function Section() {
           ))}
         </ul>
       </aside>
-      <main>I'm main</main>
+      <main>
+        <ul>
+          {list.map((item, index) => (
+            <li key={"list" + index}>
+              <a href={item["url"]}>
+                <span>{item["date"]}</span>
+                <span>{item["title"]}</span>
+                <span>{item["vendor"]}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </main>
     </section>
   );
 }

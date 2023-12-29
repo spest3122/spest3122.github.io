@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL:
-    "https://data.moa.gov.tw/OpenData/Service/OpenData/DataFileService.aspx?",
+  baseURL: "https://data.moa.gov.tw/OpenData/Service/OpenData",
 });
 
 /**
