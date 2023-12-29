@@ -1,4 +1,10 @@
 .footer {
   background-color: #afc8ad;
-  padding: 20px 0;
+  padding: 20px;
+  display: flex;
+}
+
+.footer .info,
+.personInfo {
+  flex: 1;
 }
