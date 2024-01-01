@@ -26,12 +26,14 @@ function Section() {
           {sectionList.map((item, index) => (
             <li
               key={"section" + item.id}
-              className={`list_place ${index === 5 ? "list_place_active" : ""}`}
+              className={`list_place ${index === 0 ? "list_place_active" : ""}`}
             >
               <div className="place_box">
                 <p className="place_title">{item.name}</p>
               </div>
-              <span className="tooltip">{item.name}</span>
+              {item.name.length > 5 && (
+                <span className="tooltip">{item.name}</span>
+              )}
             </li>
           ))}
         </ul>

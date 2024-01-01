@@ -18,21 +18,24 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   max-width: 100px;
+}
+
+.list_place {
   position: relative;
-  z-index: 0;
 }
 
 .list_place .tooltip {
   display: inline-block;
   visibility: hidden;
   width: 120px;
-  background-color: black;
-  color: #fff;
+  background-color: #88ab8e;
+  color: #eee7da;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
   position: absolute;
-  left: 0;
+  left: 0px;
+  top: 34px;
   z-index: 1;
 }
 
@@ -48,7 +51,6 @@
 
 .list_place_active {
   border-radius: 4px;
-  overflow: hidden;
   background-color: #afc8ad;
 }
 
