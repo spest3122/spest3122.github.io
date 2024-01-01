@@ -21,20 +21,28 @@ function Section() {
   };
   return (
     <section className="section">
-      <aside>
-        <ul>
-          {sectionList.map((item) => (
-            <li key={"section" + item.id}>{item.name}</li>
+      <aside className="aside">
+        <ul className="aside_list">
+          {sectionList.map((item, index) => (
+            <li
+              key={"section" + item.id}
+              className={`list_place ${index === 5 ? "list_place_active" : ""}`}
+            >
+              <div className="place_box">
+                <p className="place_title">{item.name}</p>
+              </div>
+              <span className="tooltip">{item.name}</span>
+            </li>
           ))}
         </ul>
       </aside>
       <main>
-        <ul>
+        <ul className="content">
           {list.map((item, index) => (
             <li key={"list" + index}>
               <a href={item["url"]}>
-                <span>{item["date"]}</span>
                 <span>{item["title"]}</span>
+                <span>{item["date"]}</span>
                 <span>{item["vendor"]}</span>
               </a>
             </li>
