@@ -50,17 +50,44 @@
 }
 
 .list_place_active {
-  border-radius: 4px;
-  background-color: #afc8ad;
+  border-radius: 8px;
+  background-color: #88ab8e;
 }
 
 .list_place_active .place_title {
   color: #eee7da;
 }
 
-.section .content {
+.main .content_list {
   overflow-y: scroll;
   height: 400px;
+}
+
+.list_row {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.row_block {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.list_row:hover {
+  background-color: #88ab8e;
+  color: #eee7da;
+}
+.list_row:hover .row_title,
+.list_row:hover .row_vendor,
+.list_row:hover .row_date {
+  color: #eee7da;
+}
+
+.row_title,
+.row_vendor,
+.row_date {
+  color: #88ab8e;
 }
 
 @media (max-width: 576px) {
