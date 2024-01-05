@@ -1,9 +1,13 @@
 .section {
   display: flex;
   flex: 1;
-  padding: 10px;
+  padding: 10px 40px;
+  height: auto;
+  overflow: auto;
 }
-
+.aside {
+  margin-right: 30px;
+}
 .aside_list {
   padding: 4px;
 }
@@ -56,11 +60,6 @@
 
 .list_place_active .place_title {
   color: #eee7da;
-}
-
-.main .content_list {
-  overflow-y: scroll;
-  height: 400px;
 }
 
 .list_row {
