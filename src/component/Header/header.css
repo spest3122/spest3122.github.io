@@ -5,6 +5,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+.icon-bar3 {
+  position: absolute;
+  cursor: pointer;
+  left: 20px;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 .header h2 {
   font-size: 1.5rem;
