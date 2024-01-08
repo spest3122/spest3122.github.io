@@ -20,7 +20,7 @@
   justify-content: center;
   padding: 8px 4px;
   color: #88ab8e;
-  font-size: 16px;
+  font-size: 1rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -66,7 +66,7 @@
 }
 
 .list_row {
-  padding: 8px;
+  padding: 12px 8px;
   border-radius: 8px;
 }
 
