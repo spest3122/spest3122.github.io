@@ -10,6 +10,10 @@
   padding: 4px;
 }
 
+.main {
+  flex: 1;
+}
+
 .main .content_list {
   height: calc(100vh - 40px - 1.5rem - 24px);
   overflow: scroll;
@@ -29,6 +33,7 @@
 
 .list_place {
   position: relative;
+  cursor: pointer;
 }
 
 .list_place .tooltip {

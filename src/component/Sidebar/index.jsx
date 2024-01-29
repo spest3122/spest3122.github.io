@@ -6,7 +6,6 @@ const sectionList = [
   { id: 3, name: "林業試驗所", unitId: "105" },
   { id: 4, name: "台東改良場", unitId: "141" },
   { id: 5, name: "桃園改良場", unitId: "807" },
-  { id: 6, name: "農業藥物試驗所", unitId: "D41" },
 ];
 const Sidebar = ({ toggleBar }) => {
   return (

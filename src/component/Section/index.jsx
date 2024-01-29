@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { mdaresApi } from "../Logic";
+import callAgriApi from "../Logic";
 import "./section.css";
 
 const sectionList = [
@@ -8,16 +8,24 @@ const sectionList = [
   { id: 3, name: "林業試驗所", unitId: "105" },
   { id: 4, name: "台東改良場", unitId: "141" },
   { id: 5, name: "桃園改良場", unitId: "807" },
-  { id: 6, name: "農業藥物試驗所", unitId: "D41" },
 ];
 function Section() {
   const [list, setList] = useState([]);
+  const [currentUnit, setCurrentUnit] = useState("106");
+  const [sectionIndex, setSectionIndex] = useState(0);
   useEffect(() => {
     callApi();
-  }, []);
+  }, [currentUnit]);
+
   const callApi = async () => {
-    let result = await mdaresApi();
+    let result = await callAgriApi({ id: currentUnit });
     setList(result);
+  };
+
+  const changeUnit = (unit, index) => {
+    setCurrentUnit(unit);
+    setList([]);
+    setSectionIndex(index);
   };
   return (
     <section className="section">
@@ -26,7 +34,10 @@ function Section() {
           {sectionList.map((item, index) => (
             <li
               key={"section" + item.id}
-              className={`list_place ${index === 0 ? "list_place_active" : ""}`}
+              className={`list_place ${
+                index === sectionIndex ? "list_place_active" : ""
+              }`}
+              onClick={() => changeUnit(item.unitId, index)}
             >
               <div className="place_box">
                 <p className="place_title">{item.name}</p>
