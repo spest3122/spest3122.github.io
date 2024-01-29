@@ -13,13 +13,16 @@ function Section() {
   const [list, setList] = useState([]);
   const [currentUnit, setCurrentUnit] = useState("106");
   const [sectionIndex, setSectionIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     callApi();
   }, [currentUnit]);
 
   const callApi = async () => {
+    setLoading(true);
     let result = await callAgriApi({ id: currentUnit });
     setList(result);
+    setLoading(false);
   };
 
   const changeUnit = (unit, index) => {
@@ -50,25 +53,29 @@ function Section() {
         </ul>
       </aside>
       <main className="main">
-        <ul className="content_list">
-          {list.map((item, index) => (
-            <li key={"list" + index} className="list_row">
-              <a href={item["url"]} className="row_link" target="_blank">
-                <div className="row_block">
-                  <p className="row_title">
-                    <span>技轉項目 : </span>
-                    {item["title"]}
+        {loading ? (
+          <div>Loading ....</div>
+        ) : (
+          <ul className="content_list">
+            {list.map((item, index) => (
+              <li key={"list" + index} className="list_row">
+                <a href={item["url"]} className="row_link" target="_blank">
+                  <div className="row_block">
+                    <p className="row_title">
+                      <span>技轉項目 : </span>
+                      {item["title"]}
+                    </p>
+                    <span className="row_date">{item["date"]}</span>
+                  </div>
+                  <p className="row_vendor">
+                    <span>授權業者 : </span>
+                    {item["vendor"]}
                   </p>
-                  <span className="row_date">{item["date"]}</span>
-                </div>
-                <p className="row_vendor">
-                  <span>授權業者 : </span>
-                  {item["vendor"]}
-                </p>
-              </a>
-            </li>
-          ))}
-        </ul>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </main>
     </section>
   );
