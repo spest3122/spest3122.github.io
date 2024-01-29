@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/spest3122.github.io/",
+  base: "/station-list/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
