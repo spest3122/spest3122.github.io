@@ -9,19 +9,56 @@ const sectionList = [
   { id: 4, name: "台東改良場", unitId: "141" },
   { id: 5, name: "桃園改良場", unitId: "807" },
 ];
+
+const debounce = (func, wait) => {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      timeout = null;
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
 function Section() {
   const [list, setList] = useState([]);
   const [currentUnit, setCurrentUnit] = useState("106");
   const [sectionIndex, setSectionIndex] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(20);
+
   useEffect(() => {
     callApi();
   }, [currentUnit]);
 
-  const callApi = async () => {
+  useEffect(() => {
+    const container = document.getElementById("content_list");
+
+    const handleScroll = debounce(() => {
+      if (
+        container.scrollTop + container.clientHeight ===
+          container.scrollHeight &&
+        !loading
+      ) {
+        callApi(page);
+      }
+    }, 200);
+
+    container.addEventListener("scroll", handleScroll);
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+    };
+  }, [page, currentUnit]);
+
+  const callApi = async (next = 0) => {
     setLoading(true);
-    let result = await callAgriApi({ id: currentUnit });
-    setList(result);
+    let result = await callAgriApi({ id: currentUnit, page: next });
+
+    if (next > 0) {
+      setPage((prev) => prev + 20);
+    }
+    setList((prev) => [...prev, ...result]);
     setLoading(false);
   };
 
@@ -29,6 +66,7 @@ function Section() {
     setCurrentUnit(unit);
     setList([]);
     setSectionIndex(index);
+    setPage(20);
   };
   return (
     <section className="section">
@@ -53,11 +91,11 @@ function Section() {
         </ul>
       </aside>
       <main className="main">
-        {loading ? (
-          <div>Loading ....</div>
-        ) : (
-          <ul className="content_list">
-            {list.map((item, index) => (
+        <ul className="content_list" id="content_list">
+          {loading ? (
+            <div>Loading ....</div>
+          ) : (
+            list.map((item, index) => (
               <li key={"list" + index} className="list_row">
                 <a href={item["url"]} className="row_link" target="_blank">
                   <div className="row_block">
@@ -73,9 +111,9 @@ function Section() {
                   </p>
                 </a>
               </li>
-            ))}
-          </ul>
-        )}
+            ))
+          )}
+        </ul>
       </main>
     </section>
   );
