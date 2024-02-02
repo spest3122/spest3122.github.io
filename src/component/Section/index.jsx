@@ -10,15 +10,17 @@ const sectionList = [
   { id: 5, name: "桃園改良場", unitId: "807" },
 ];
 
-const debounce = (func, wait) => {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      timeout = null;
+const throttle = (func, wait) => {
+  let shouldWait = false;
+  return function (...args) {
+    if (!shouldWait) {
       func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
+      shouldWait = true;
+
+      setTimeout(function () {
+        shouldWait = false;
+      }, wait);
+    }
   };
 };
 function Section() {
@@ -35,10 +37,10 @@ function Section() {
   useEffect(() => {
     const container = document.getElementById("content_list");
 
-    const handleScroll = debounce(() => {
+    const handleScroll = throttle(() => {
       if (
-        container.scrollTop + container.clientHeight ===
-          container.scrollHeight &&
+        container.scrollTop + container.clientHeight >
+          container.scrollHeight - 200 &&
         !loading
       ) {
         callApi(page);
