@@ -16,7 +16,7 @@
 
 .main .content_list {
   height: calc(100vh - 40px - 1.5rem - 24px);
-  overflow: scroll;
+  overflow: auto;
 }
 
 .place_box {
