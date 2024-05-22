@@ -1,13 +1,13 @@
+import PropTypes from "prop-types";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import "./sidebar.css";
-const sectionList = [
-  { id: 1, name: "苗栗改良場", unitId: "106" },
-  { id: 2, name: "畜產試驗所", unitId: "110" },
-  { id: 3, name: "林業試驗所", unitId: "105" },
-  { id: 4, name: "台東改良場", unitId: "141" },
-  { id: 5, name: "桃園改良場", unitId: "807" },
-];
-const Sidebar = ({ toggleBar }) => {
+import { sectionList } from "../utils/sectionList";
+
+const Sidebar = ({ toggleBar, changeUnit, sectionIndex }) => {
+  const sidebarChangeUnit = (id, index) => {
+    changeUnit(id, index);
+    toggleBar();
+  };
   return (
     <div className="sidebar">
       <div className="icon-xmark" onClick={toggleBar}>
@@ -17,7 +17,10 @@ const Sidebar = ({ toggleBar }) => {
         {sectionList.map((item, index) => (
           <li
             key={"section" + item.id}
-            className={`list_place ${index === 0 ? "list_place_active" : ""}`}
+            className={`list_place ${
+              index === sectionIndex ? "list_place_active" : ""
+            }`}
+            onClick={() => sidebarChangeUnit(item.unitId, index)}
           >
             <div className="place_box">
               <p className="place_title">{item.name}</p>
@@ -30,5 +33,11 @@ const Sidebar = ({ toggleBar }) => {
       </ul>
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  toggleBar: PropTypes.func,
+  changeUnit: PropTypes.func,
+  sectionIndex: PropTypes.number,
 };
 export default Sidebar;

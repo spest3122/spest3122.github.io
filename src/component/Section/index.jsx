@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
-import callAgriApi from "../Logic";
+import PropTypes from "prop-types";
+import { useEffect } from "react";
 import "./section.css";
-
-const sectionList = [
-  { id: 1, name: "苗栗改良場", unitId: "106" },
-  { id: 2, name: "畜產試驗所", unitId: "110" },
-  { id: 3, name: "林業試驗所", unitId: "105" },
-  { id: 4, name: "台東改良場", unitId: "141" },
-  { id: 5, name: "桃園改良場", unitId: "807" },
-];
+import { sectionList } from "../utils/sectionList";
 
 const throttle = (func, wait) => {
   let shouldWait = false;
@@ -23,17 +16,8 @@ const throttle = (func, wait) => {
     }
   };
 };
-function Section() {
-  const [list, setList] = useState([]);
-  const [currentUnit, setCurrentUnit] = useState("106");
-  const [sectionIndex, setSectionIndex] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(20);
 
-  useEffect(() => {
-    callApi();
-  }, [currentUnit]);
-
+function Section({ callApi, currentUnit, loading, changeUnit, list }) {
   useEffect(() => {
     const container = document.getElementById("content_list");
 
@@ -43,7 +27,7 @@ function Section() {
           container.scrollHeight - 200 &&
         !loading
       ) {
-        callApi(page);
+        callApi(currentUnit.page);
       }
     }, 200);
 
@@ -51,25 +35,8 @@ function Section() {
     return () => {
       container.removeEventListener("scroll", handleScroll);
     };
-  }, [page, currentUnit]);
+  }, [currentUnit.page, currentUnit.unitId]);
 
-  const callApi = async (next = 0) => {
-    setLoading(true);
-    let result = await callAgriApi({ id: currentUnit, page: next });
-
-    if (next > 0) {
-      setPage((prev) => prev + 20);
-    }
-    setList((prev) => [...prev, ...result]);
-    setLoading(false);
-  };
-
-  const changeUnit = (unit, index) => {
-    setCurrentUnit(unit);
-    setList([]);
-    setSectionIndex(index);
-    setPage(20);
-  };
   return (
     <section className="section">
       <aside className="aside">
@@ -78,7 +45,7 @@ function Section() {
             <li
               key={"section" + item.id}
               className={`list_place ${
-                index === sectionIndex ? "list_place_active" : ""
+                index === currentUnit.sectionIndex ? "list_place_active" : ""
               }`}
               onClick={() => changeUnit(item.unitId, index)}
             >
@@ -99,7 +66,12 @@ function Section() {
           ) : (
             list.map((item, index) => (
               <li key={"list" + index} className="list_row">
-                <a href={item["url"]} className="row_link" target="_blank">
+                <a
+                  href={item["url"]}
+                  className="row_link"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   <div className="row_block">
                     <p className="row_title">
                       <span>技轉項目 : </span>
@@ -120,5 +92,12 @@ function Section() {
     </section>
   );
 }
+Section.propTypes = {
+  callApi: PropTypes.func,
+  currentUnit: PropTypes.object,
+  loading: PropTypes.bool,
+  changeUnit: PropTypes.object,
+  list: PropTypes.array,
+};
 
 export default Section;
