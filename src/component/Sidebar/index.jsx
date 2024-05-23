@@ -6,7 +6,6 @@ import { sectionList } from "../utils/sectionList";
 const Sidebar = ({ toggleBar, changeUnit, sectionIndex }) => {
   const sidebarChangeUnit = (id, index) => {
     changeUnit(id, index);
-    toggleBar();
   };
   return (
     <div className="sidebar">

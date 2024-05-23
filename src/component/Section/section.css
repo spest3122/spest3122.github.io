@@ -12,10 +12,11 @@
 
 .main {
   flex: 1;
+  overflow: hidden;
 }
 
 .main .content_list {
-  height: 89vh;
+  height: calc(100vh - 40px - 1.5rem - 24px);
   overflow-y: auto;
 }
 
@@ -100,8 +101,5 @@
 @media (max-width: 576px) {
   .section .aside {
     display: none;
-  }
-  .main .content_list {
-    height: 90vh;
   }
 }
