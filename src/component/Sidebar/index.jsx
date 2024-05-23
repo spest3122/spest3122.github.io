@@ -21,6 +21,7 @@ const Sidebar = ({ toggleBar, changeUnit, sectionIndex }) => {
               index === sectionIndex ? "list_place_active" : ""
             }`}
             onClick={() => sidebarChangeUnit(item.unitId, index)}
+            onTouchStart={() => sidebarChangeUnit(item.unitId, index)}
           >
             <div className="place_box">
               <p className="place_title">{item.name}</p>

@@ -48,6 +48,7 @@ function Section({ callApi, currentUnit, loading, changeUnit, list }) {
                 index === currentUnit.sectionIndex ? "list_place_active" : ""
               }`}
               onClick={() => changeUnit(item.unitId, index)}
+              onTouchStart={() => changeUnit(item.unitId, index)}
             >
               <div className="place_box">
                 <p className="place_title">{item.name}</p>
