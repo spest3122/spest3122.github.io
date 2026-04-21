@@ -1,147 +1,281 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Voice Recorder to n8n</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
-    button { margin-right: 8px; margin-bottom: 12px; padding: 10px 16px; }
-    #status, #result { margin-top: 12px; white-space: pre-wrap; }
-    audio { display: block; margin-top: 12px; width: 100%; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工具面板</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --border-hover: #444;
+    --text-primary: #f0ede8;
+    --text-secondary: #888;
+    --text-muted: #444;
+    --purple: #a78bfa;
+    --green: #6ee7b7;
+    --coral: #fb923c;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(167,139,250,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(110,231,183,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+  }
+
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .card-purple::before { background: radial-gradient(ellipse 80% 60% at 0% 50%, rgba(167,139,250,0.08), transparent); }
+  .card-green::before  { background: radial-gradient(ellipse 80% 60% at 0% 50%, rgba(110,231,183,0.08), transparent); }
+  .card-coral::before  { background: radial-gradient(ellipse 80% 60% at 0% 50%, rgba(251,146,60,0.08), transparent); }
+
+  .card:hover {
+    border-color: var(--border-hover);
+    transform: translateX(3px);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .icon-wrap {
+    width: 40px;
+    height: 40px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .card-purple .icon-wrap { background: rgba(167,139,250,0.12); }
+  .card-green  .icon-wrap { background: rgba(110,231,183,0.12); }
+  .card-coral  .icon-wrap { background: rgba(251,146,60,0.12); }
+
+  .icon-wrap svg { display: block; }
+
+  .card-body { flex: 1; min-width: 0; }
+
+  .card-label {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .card-purple .card-label { color: var(--purple); }
+  .card-green  .card-label { color: var(--green); }
+  .card-coral  .card-label { color: var(--coral); }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .card-url {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .arrow {
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .card:hover .arrow {
+    color: var(--text-secondary);
+    transform: translate(2px, -2px);
+  }
+
+  footer {
+    margin-top: 2rem;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'DM Mono', monospace;
+    text-align: center;
+    letter-spacing: 0.05em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  header    { animation: fadeUp 0.5s ease both; }
+  .card:nth-child(1) { animation: fadeUp 0.5s 0.1s ease both; }
+  .card:nth-child(2) { animation: fadeUp 0.5s 0.18s ease both; }
+  .card:nth-child(3) { animation: fadeUp 0.5s 0.26s ease both; }
+  footer    { animation: fadeUp 0.5s 0.4s ease both; }
+</style>
 </head>
 <body>
-  <h1>Voice Recorder → n8n Webhook</h1>
+<div class="grid-bg"></div>
 
-  <button id="startBtn">Start Recording</button>
-  <button id="stopBtn" disabled>Stop Recording</button>
-  <button id="uploadBtn" disabled>Upload to n8n</button>
+<div class="container">
+  <header>
+    <p class="eyebrow">// 工具面板</p>
+    <h1>快速入口</h1>
+  </header>
 
-  <audio id="player" controls></audio>
+  <div class="cards">
 
-  <div id="status"></div>
-  <div id="result"></div>
+    <a class="card card-purple"
+       href="https://nonohsu.app.n8n.cloud/form/eeb8ee1b-c735-4361-bb40-b5f21b908689"
+       target="_blank" rel="noopener">
+      <div class="icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="#a78bfa" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <p class="card-label">更新</p>
+        <p class="card-title">提交表單</p>
+        <p class="card-url">nonohsu.app.n8n.cloud</p>
+      </div>
+      <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <path d="M7 17L17 7M7 7h10v10"/>
+      </svg>
+    </a>
 
-  <script>
-    const webhookUrl = "https://nonohsu.app.n8n.cloud/webhook-test/voice";
+    <a class="card card-green"
+       href="https://docs.google.com/spreadsheets/d/1xaBmxUNVI4OIgm1mIw55nrKNQv3lwkp6xV02i7dovXM/edit?usp=sharing"
+       target="_blank" rel="noopener">
+      <div class="icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="#6ee7b7" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <path d="M3 9h18M3 15h18M9 3v18"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <p class="card-label">設定</p>
+        <p class="card-title">Google 試算表</p>
+        <p class="card-url">docs.google.com/spreadsheets</p>
+      </div>
+      <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <path d="M7 17L17 7M7 7h10v10"/>
+      </svg>
+    </a>
 
-    const startBtn = document.getElementById("startBtn");
-    const stopBtn = document.getElementById("stopBtn");
-    const uploadBtn = document.getElementById("uploadBtn");
-    const player = document.getElementById("player");
-    const statusEl = document.getElementById("status");
-    const resultEl = document.getElementById("result");
+    <a class="card card-coral"
+       href="https://spest3122.github.io/off_days_viewer.html"
+       target="_blank" rel="noopener">
+      <div class="icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="#fb923c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <p class="card-label">測試</p>
+        <p class="card-title">假日檢視器</p>
+        <p class="card-url">spest3122.github.io</p>
+      </div>
+      <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2">
+        <path d="M7 17L17 7M7 7h10v10"/>
+      </svg>
+    </a>
 
-    let mediaRecorder = null;
-    let audioChunks = [];
-    let audioBlob = null;
-    let stream = null;
+  </div>
 
-    function setStatus(text) {
-      statusEl.textContent = text;
-    }
-
-    startBtn.addEventListener("click", async () => {
-      try {
-        resultEl.textContent = "";
-        audioChunks = [];
-        audioBlob = null;
-
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-        let mimeType = "";
-        if (MediaRecorder.isTypeSupported("audio/webm")) {
-          mimeType = "audio/webm";
-        } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
-          mimeType = "audio/mp4";
-        }
-
-        mediaRecorder = mimeType
-          ? new MediaRecorder(stream, { mimeType })
-          : new MediaRecorder(stream);
-
-        mediaRecorder.ondataavailable = (event) => {
-          if (event.data && event.data.size > 0) {
-            audioChunks.push(event.data);
-          }
-        };
-
-        mediaRecorder.onstop = () => {
-          const finalType = mimeType || audioChunks[0]?.type || "audio/webm";
-          const extension = finalType.includes("mp4") ? "m4a" : "webm";
-
-          audioBlob = new Blob(audioChunks, { type: finalType });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          player.src = audioUrl;
-          uploadBtn.disabled = false;
-          setStatus(`Recording stopped. File ready: recording.${extension}`);
-        };
-
-        mediaRecorder.start();
-        setStatus("Recording...");
-        startBtn.disabled = true;
-        stopBtn.disabled = false;
-        uploadBtn.disabled = true;
-      } catch (error) {
-        console.error(error);
-        setStatus("Cannot access microphone: " + error.message);
-      }
-    });
-
-    stopBtn.addEventListener("click", () => {
-      if (mediaRecorder && mediaRecorder.state !== "inactive") {
-        mediaRecorder.stop();
-      }
-
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-      }
-
-      startBtn.disabled = false;
-      stopBtn.disabled = true;
-    });
-
-    uploadBtn.addEventListener("click", async () => {
-      if (!audioBlob) {
-        setStatus("No audio to upload.");
-        return;
-      }
-
-      try {
-        setStatus("Uploading to n8n...");
-
-        const mimeType = audioBlob.type || "audio/webm";
-        const extension = mimeType.includes("mp4") ? "m4a" : "webm";
-        const file = new File([audioBlob], `recording.${extension}`, { type: mimeType });
-
-        const formData = new FormData();
-        formData.append("audio", file);
-        formData.append("userId", "demo-user");
-        formData.append("note", "Recorded from browser");
-
-        const response = await fetch(webhookUrl, {
-          method: "POST",
-          body: formData
-        });
-
-        const contentType = response.headers.get("content-type") || "";
-        let data;
-
-        if (contentType.includes("application/json")) {
-          data = await response.json();
-          resultEl.textContent = JSON.stringify(data, null, 2);
-        } else {
-          data = await response.text();
-          resultEl.textContent = data;
-        }
-
-        setStatus(`Upload complete. HTTP ${response.status}`);
-      } catch (error) {
-        console.error(error);
-        setStatus("Upload failed: " + error.message);
-      }
-    });
-  </script>
+  <footer>三個快速連結 &mdash; 點擊即可開啟</footer>
+</div>
 </body>
 </html>
